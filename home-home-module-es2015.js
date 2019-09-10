@@ -1247,14 +1247,51 @@ let HomePage = class HomePage {
         this.zoom = 9;
         this.lat = 25;
         this.lng = -80.627836399999983;
-        this.marker = null;
+        this.travelRoute = null;
         this.speedMultiplier = 1;
         this.serviceURL = 'https://btt-api.herokuapp.com/tarpons?ID=';
+        this.placeMarkerAndPanTo = (latLng, map, markerToAttach) => {
+            const infoContent = '<div id="content">' + markerToAttach.getPosition() + '</div>';
+            this.emptyMarker = new google.maps.Marker({
+                position: latLng,
+                map,
+            });
+            // google.maps.event.addListener(this.map, 'bounds_changed', () => {
+            //   window.setTimeout(() => {
+            //     map.panTo(emptyMarker.getPosition());
+            //   }, 1000);
+            // });
+            google.maps.event.addListener(this.emptyMarker, 'click', () => {
+                this.removeMarkers();
+                const infowindow = new google.maps.InfoWindow();
+                infowindow.setContent(infoContent);
+                infowindow.open(map, this.emptyMarker);
+                this.previousMarker = this.emptyMarker;
+            });
+            google.maps.event.trigger(this.emptyMarker, 'click');
+            map.panTo(latLng);
+        };
         this.height = platform.height();
     }
     onMapReady(map) {
+        const mapOptions = {
+            panControl: true,
+            zoomControl: true,
+            mapTypeControl: true,
+            scaleControl: true,
+            streetViewControl: true,
+            overviewMapControl: true,
+            rotateControl: true,
+        };
         this.map = map;
-        this.loadLayerData('18574');
+        this.map.mapTypeId = google.maps.MapTypeId.HYBRID;
+        // this.map.mapTypeControl = true;
+        (this.map.zoomControl = true),
+            (this.map.zoomControlOptions = {
+                position: google.maps.ControlPosition.RIGHT_TOP,
+            }),
+            this.loadLayerData('18574');
+        this.initEvents();
     }
     loadLayerData(layerId) {
         const locationArray = [];
@@ -1272,7 +1309,8 @@ let HomePage = class HomePage {
         // I know this can be done via pipe(map())
         points.forEach(x => locationArray.push(new google.maps.LatLng(x.Latitude, x.Longitude)));
         this.line = new google.maps.Polyline({
-            strokeOpacity: 0.1,
+            strokeOpacity: 0.5,
+            strokeColor: 'yellow',
             path: [],
             map: this.map,
         });
@@ -1293,19 +1331,21 @@ let HomePage = class HomePage {
         });
     }
     initRoute() {
-        const route = this.line.getPath().j;
+        const routePoints = this.line.getPath().j;
         // options
-        const options = {
+        const travelMarkerOptions = {
             map: this.map,
             speed: 1000,
             interval: 10,
             speedMultiplier: this.speedMultiplier,
+            // markerType: 'symbol',
             markerOptions: {
-                title: 'Travel Marker',
+                // title: 'Travel Marker',
+                clickable: true,
+                map: this.map,
                 animation: google.maps.Animation.DROP,
                 icon: {
                     url: 'https://greyghostcharters.com/wp-content/uploads/2014/04/tarpon-species.png',
-                    // This marker is 20 pixels wide by 32 pixels high.
                     animation: google.maps.Animation.DROP,
                     scaledSize: new google.maps.Size(94, 47),
                     origin: new google.maps.Point(0, 0),
@@ -1315,40 +1355,58 @@ let HomePage = class HomePage {
             },
         };
         // define marker
-        this.marker = new travel_marker__WEBPACK_IMPORTED_MODULE_3__["TravelMarker"](options);
-        // add locations from direction service
-        this.marker.addLocation(route);
+        this.travelRoute = new travel_marker__WEBPACK_IMPORTED_MODULE_3__["TravelMarker"](travelMarkerOptions);
+        this.travelRoute.addListener('click', e => {
+            console.log(e);
+            this.placeMarkerAndPanTo(e.latLng, this.map, this.travelRoute);
+        });
+        this.travelRoute.addLocation(routePoints);
+        // TODO: implement panning of most recent marker rendered
+        // const position = this.marker.getPosition();
+        // if (position) {
+        //   this.map.panTo(position);
+        // }
         setTimeout(() => this.play(), 2000);
     }
+    removeMarkers() {
+        if (this.previousMarker && this.previousMarker.setMap) {
+            this.previousMarker.setMap(null);
+        }
+    }
     play() {
-        this.marker.play();
+        this.travelRoute.play();
     }
     pause() {
-        this.marker.pause();
+        this.travelRoute.pause();
     }
     reset() {
-        this.marker.reset();
+        this.travelRoute.reset();
+        this.removeMarkers();
     }
     next() {
-        this.marker.next();
+        this.travelRoute.next();
+        this.removeMarkers();
     }
     prev() {
-        this.marker.prev();
+        this.travelRoute.prev();
+        this.removeMarkers();
     }
     fast() {
         this.speedMultiplier *= 2;
-        this.marker.setSpeedMultiplier(this.speedMultiplier);
+        this.travelRoute.setSpeedMultiplier(this.speedMultiplier);
+        this.removeMarkers();
     }
     slow() {
         this.speedMultiplier /= 2;
-        this.marker.setSpeedMultiplier(this.speedMultiplier);
+        this.travelRoute.setSpeedMultiplier(this.speedMultiplier);
+        this.removeMarkers();
     }
     initEvents() {
-        if (this.marker) {
-            this.marker.event.onEvent((event, data) => {
-                console.log(event, data);
-            });
-        }
+        // if (this.marker) {
+        //   this.marker.event.onEvent((event: EventType, data: TravelData) => {
+        //     console.log(event, data);
+        //   });
+        // }
     }
 };
 HomePage.ctorParameters = () => [

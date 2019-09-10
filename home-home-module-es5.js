@@ -1243,6 +1243,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var HomePage = /** @class */ (function () {
     function HomePage(platform, http) {
+        var _this = this;
         this.platform = platform;
         this.http = http;
         this.title = 'BTT - FishTracker';
@@ -1250,14 +1251,51 @@ var HomePage = /** @class */ (function () {
         this.zoom = 9;
         this.lat = 25;
         this.lng = -80.627836399999983;
-        this.marker = null;
+        this.travelRoute = null;
         this.speedMultiplier = 1;
         this.serviceURL = 'https://btt-api.herokuapp.com/tarpons?ID=';
+        this.placeMarkerAndPanTo = function (latLng, map, markerToAttach) {
+            var infoContent = '<div id="content">' + markerToAttach.getPosition() + '</div>';
+            _this.emptyMarker = new google.maps.Marker({
+                position: latLng,
+                map: map,
+            });
+            // google.maps.event.addListener(this.map, 'bounds_changed', () => {
+            //   window.setTimeout(() => {
+            //     map.panTo(emptyMarker.getPosition());
+            //   }, 1000);
+            // });
+            google.maps.event.addListener(_this.emptyMarker, 'click', function () {
+                _this.removeMarkers();
+                var infowindow = new google.maps.InfoWindow();
+                infowindow.setContent(infoContent);
+                infowindow.open(map, _this.emptyMarker);
+                _this.previousMarker = _this.emptyMarker;
+            });
+            google.maps.event.trigger(_this.emptyMarker, 'click');
+            map.panTo(latLng);
+        };
         this.height = platform.height();
     }
     HomePage.prototype.onMapReady = function (map) {
+        var mapOptions = {
+            panControl: true,
+            zoomControl: true,
+            mapTypeControl: true,
+            scaleControl: true,
+            streetViewControl: true,
+            overviewMapControl: true,
+            rotateControl: true,
+        };
         this.map = map;
-        this.loadLayerData('18574');
+        this.map.mapTypeId = google.maps.MapTypeId.HYBRID;
+        // this.map.mapTypeControl = true;
+        (this.map.zoomControl = true),
+            (this.map.zoomControlOptions = {
+                position: google.maps.ControlPosition.RIGHT_TOP,
+            }),
+            this.loadLayerData('18574');
+        this.initEvents();
     };
     HomePage.prototype.loadLayerData = function (layerId) {
         var _this = this;
@@ -1279,7 +1317,8 @@ var HomePage = /** @class */ (function () {
             return locationArray.push(new google.maps.LatLng(x.Latitude, x.Longitude));
         });
         this.line = new google.maps.Polyline({
-            strokeOpacity: 0.1,
+            strokeOpacity: 0.5,
+            strokeColor: 'yellow',
             path: [],
             map: this.map,
         });
@@ -1301,19 +1340,21 @@ var HomePage = /** @class */ (function () {
     };
     HomePage.prototype.initRoute = function () {
         var _this = this;
-        var route = this.line.getPath().j;
+        var routePoints = this.line.getPath().j;
         // options
-        var options = {
+        var travelMarkerOptions = {
             map: this.map,
             speed: 1000,
             interval: 10,
             speedMultiplier: this.speedMultiplier,
+            // markerType: 'symbol',
             markerOptions: {
-                title: 'Travel Marker',
+                // title: 'Travel Marker',
+                clickable: true,
+                map: this.map,
                 animation: google.maps.Animation.DROP,
                 icon: {
                     url: 'https://greyghostcharters.com/wp-content/uploads/2014/04/tarpon-species.png',
-                    // This marker is 20 pixels wide by 32 pixels high.
                     animation: google.maps.Animation.DROP,
                     scaledSize: new google.maps.Size(94, 47),
                     origin: new google.maps.Point(0, 0),
@@ -1323,40 +1364,58 @@ var HomePage = /** @class */ (function () {
             },
         };
         // define marker
-        this.marker = new travel_marker__WEBPACK_IMPORTED_MODULE_3__["TravelMarker"](options);
-        // add locations from direction service
-        this.marker.addLocation(route);
+        this.travelRoute = new travel_marker__WEBPACK_IMPORTED_MODULE_3__["TravelMarker"](travelMarkerOptions);
+        this.travelRoute.addListener('click', function (e) {
+            console.log(e);
+            _this.placeMarkerAndPanTo(e.latLng, _this.map, _this.travelRoute);
+        });
+        this.travelRoute.addLocation(routePoints);
+        // TODO: implement panning of most recent marker rendered
+        // const position = this.marker.getPosition();
+        // if (position) {
+        //   this.map.panTo(position);
+        // }
         setTimeout(function () { return _this.play(); }, 2000);
     };
+    HomePage.prototype.removeMarkers = function () {
+        if (this.previousMarker && this.previousMarker.setMap) {
+            this.previousMarker.setMap(null);
+        }
+    };
     HomePage.prototype.play = function () {
-        this.marker.play();
+        this.travelRoute.play();
     };
     HomePage.prototype.pause = function () {
-        this.marker.pause();
+        this.travelRoute.pause();
     };
     HomePage.prototype.reset = function () {
-        this.marker.reset();
+        this.travelRoute.reset();
+        this.removeMarkers();
     };
     HomePage.prototype.next = function () {
-        this.marker.next();
+        this.travelRoute.next();
+        this.removeMarkers();
     };
     HomePage.prototype.prev = function () {
-        this.marker.prev();
+        this.travelRoute.prev();
+        this.removeMarkers();
     };
     HomePage.prototype.fast = function () {
         this.speedMultiplier *= 2;
-        this.marker.setSpeedMultiplier(this.speedMultiplier);
+        this.travelRoute.setSpeedMultiplier(this.speedMultiplier);
+        this.removeMarkers();
     };
     HomePage.prototype.slow = function () {
         this.speedMultiplier /= 2;
-        this.marker.setSpeedMultiplier(this.speedMultiplier);
+        this.travelRoute.setSpeedMultiplier(this.speedMultiplier);
+        this.removeMarkers();
     };
     HomePage.prototype.initEvents = function () {
-        if (this.marker) {
-            this.marker.event.onEvent(function (event, data) {
-                console.log(event, data);
-            });
-        }
+        // if (this.marker) {
+        //   this.marker.event.onEvent((event: EventType, data: TravelData) => {
+        //     console.log(event, data);
+        //   });
+        // }
     };
     HomePage.ctorParameters = function () { return [
         { type: _ionic_angular__WEBPACK_IMPORTED_MODULE_2__["Platform"] },
