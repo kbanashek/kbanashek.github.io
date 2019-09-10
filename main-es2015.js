@@ -474,12 +474,13 @@ const routes = [
         pathMatch: 'full',
     },
     {
-        path: 'home',
-        loadChildren: () => __webpack_require__.e(/*! import() | home-home-module */ "home-home-module").then(__webpack_require__.bind(null, /*! ./home/home.module */ "./src/app/home/home.module.ts")).then(m => m.HomePageModule),
+        path: '**',
+        redirectTo: 'home',
+        pathMatch: 'full',
     },
     {
-        path: 'list',
-        loadChildren: () => __webpack_require__.e(/*! import() | list-list-module */ "list-list-module").then(__webpack_require__.bind(null, /*! ./list/list.module */ "./src/app/list/list.module.ts")).then(m => m.ListPageModule),
+        path: 'home',
+        loadChildren: () => __webpack_require__.e(/*! import() | home-home-module */ "home-home-module").then(__webpack_require__.bind(null, /*! ./home/home.module */ "./src/app/home/home.module.ts")).then(m => m.HomePageModule),
     },
 ];
 let AppRoutingModule = class AppRoutingModule {
