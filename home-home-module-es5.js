@@ -1217,7 +1217,7 @@ var HomePageModule = /** @class */ (function () {
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = ".controls {\n  position: absolute;\n  z-index: 999;\n  top: 10px;\n  right: 5px;\n}\n\nbutton {\n  font-size: 13px;\n  background: blue;\n  color: white;\n  border: none;\n  padding: 10px;\n  border-radius: 10px;\n}\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi9Vc2Vycy9rYmFuYXNoZWsvc291cmNlL0JUVC1GaXNoVHJhY2tlci1DbGllbnQvYnR0LU5HL3NyYy9hcHAvaG9tZS9ob21lLnBhZ2Uuc2NzcyIsInNyYy9hcHAvaG9tZS9ob21lLnBhZ2Uuc2NzcyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiQUFBQTtFQUNFLGtCQUFBO0VBQ0EsWUFBQTtFQUNBLFNBQUE7RUFDQSxVQUFBO0FDQ0Y7O0FERUE7RUFDRSxlQUFBO0VBQ0EsZ0JBQUE7RUFDQSxZQUFBO0VBQ0EsWUFBQTtFQUNBLGFBQUE7RUFDQSxtQkFBQTtBQ0NGIiwiZmlsZSI6InNyYy9hcHAvaG9tZS9ob21lLnBhZ2Uuc2NzcyIsInNvdXJjZXNDb250ZW50IjpbIi5jb250cm9scyB7XG4gIHBvc2l0aW9uOiBhYnNvbHV0ZTtcbiAgei1pbmRleDogOTk5O1xuICB0b3A6IDEwcHg7XG4gIHJpZ2h0OiA1cHg7XG59XG5cbmJ1dHRvbiB7XG4gIGZvbnQtc2l6ZTogMTNweDtcbiAgYmFja2dyb3VuZDogYmx1ZTtcbiAgY29sb3I6IHdoaXRlO1xuICBib3JkZXI6IG5vbmU7XG4gIHBhZGRpbmc6IDEwcHg7XG4gIGJvcmRlci1yYWRpdXM6IDEwcHg7XG59XG4iLCIuY29udHJvbHMge1xuICBwb3NpdGlvbjogYWJzb2x1dGU7XG4gIHotaW5kZXg6IDk5OTtcbiAgdG9wOiAxMHB4O1xuICByaWdodDogNXB4O1xufVxuXG5idXR0b24ge1xuICBmb250LXNpemU6IDEzcHg7XG4gIGJhY2tncm91bmQ6IGJsdWU7XG4gIGNvbG9yOiB3aGl0ZTtcbiAgYm9yZGVyOiBub25lO1xuICBwYWRkaW5nOiAxMHB4O1xuICBib3JkZXItcmFkaXVzOiAxMHB4O1xufSJdfQ== */"
+module.exports = ".controls {\n  position: absolute;\n  z-index: 999;\n  top: 10px;\n  right: 5px;\n}\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi9Vc2Vycy9rYmFuYXNoZWsvc291cmNlL0JUVC1GaXNoVHJhY2tlci1DbGllbnQvYnR0LU5HL3NyYy9hcHAvaG9tZS9ob21lLnBhZ2Uuc2NzcyIsInNyYy9hcHAvaG9tZS9ob21lLnBhZ2Uuc2NzcyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiQUFBQTtFQUNFLGtCQUFBO0VBQ0EsWUFBQTtFQUNBLFNBQUE7RUFDQSxVQUFBO0FDQ0YiLCJmaWxlIjoic3JjL2FwcC9ob21lL2hvbWUucGFnZS5zY3NzIiwic291cmNlc0NvbnRlbnQiOlsiLmNvbnRyb2xzIHtcbiAgcG9zaXRpb246IGFic29sdXRlO1xuICB6LWluZGV4OiA5OTk7XG4gIHRvcDogMTBweDtcbiAgcmlnaHQ6IDVweDtcbn1cbiIsIi5jb250cm9scyB7XG4gIHBvc2l0aW9uOiBhYnNvbHV0ZTtcbiAgei1pbmRleDogOTk5O1xuICB0b3A6IDEwcHg7XG4gIHJpZ2h0OiA1cHg7XG59Il19 */"
 
 /***/ }),
 
@@ -1236,16 +1236,19 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _ionic_angular__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @ionic/angular */ "./node_modules/@ionic/angular/dist/fesm5.js");
 /* harmony import */ var travel_marker__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! travel-marker */ "./node_modules/travel-marker/dist/travel-marker.es2015.js");
 /* harmony import */ var _angular_common_http__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @angular/common/http */ "./node_modules/@angular/common/fesm5/http.js");
+/* harmony import */ var _state_service__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../state.service */ "./src/app/state.service.ts");
+
 
 
 
 
 
 var HomePage = /** @class */ (function () {
-    function HomePage(platform, http) {
+    function HomePage(platform, http, state) {
         var _this = this;
         this.platform = platform;
         this.http = http;
+        this.state = state;
         this.title = 'BTT - FishTracker';
         this.height = 0;
         this.zoom = 9;
@@ -1276,7 +1279,22 @@ var HomePage = /** @class */ (function () {
             map.panTo(latLng);
         };
         this.height = platform.height();
+        this.stateService = this.state;
     }
+    HomePage.prototype.ngOnInit = function () {
+        var _this = this;
+        this.stateService.getSelectedLayer.subscribe(function (selectedLayer) {
+            if (selectedLayer) {
+                if (_this.line) {
+                    _this.line.setMap(null);
+                    _this.startMarker.setMap(null);
+                    _this.endMarker.setMap(null);
+                    _this.travelRoute.setMap(null);
+                }
+                _this.loadLayerData(selectedLayer.ID);
+            }
+        });
+    };
     HomePage.prototype.onMapReady = function (map) {
         var mapOptions = {
             panControl: true,
@@ -1290,16 +1308,13 @@ var HomePage = /** @class */ (function () {
         this.map = map;
         this.map.mapTypeId = google.maps.MapTypeId.HYBRID;
         // this.map.mapTypeControl = true;
-        (this.map.zoomControl = true),
-            (this.map.zoomControlOptions = {
-                position: google.maps.ControlPosition.RIGHT_TOP,
-            }),
-            this.loadLayerData('18574');
-        this.initEvents();
+        this.map.zoomControl = true;
+        this.map.zoomControlOptions = {
+            position: google.maps.ControlPosition.RIGHT_TOP,
+        };
     };
     HomePage.prototype.loadLayerData = function (layerId) {
         var _this = this;
-        var locationArray = [];
         this.http
             .get(this.serviceURL + layerId)
             .subscribe(function (layerData) { return _this.loadMap(layerData); });
@@ -1327,12 +1342,12 @@ var HomePage = /** @class */ (function () {
     HomePage.prototype.setStartEndPoints = function (points) {
         var initialPoint = new google.maps.LatLng(points[0].Latitude, points[0].Longitude);
         var endPoint = new google.maps.LatLng(points[points.length - 1].Latitude, points[points.length - 1].Longitude);
-        var startMarker = new google.maps.Marker({
+        this.startMarker = new google.maps.Marker({
             position: initialPoint,
             map: this.map,
             label: 'Initial Location',
         });
-        var endMarker = new google.maps.Marker({
+        this.endMarker = new google.maps.Marker({
             position: endPoint,
             map: this.map,
             label: 'Last Location',
@@ -1370,11 +1385,6 @@ var HomePage = /** @class */ (function () {
             _this.placeMarkerAndPanTo(e.latLng, _this.map, _this.travelRoute);
         });
         this.travelRoute.addLocation(routePoints);
-        // TODO: implement panning of most recent marker rendered
-        // const position = this.marker.getPosition();
-        // if (position) {
-        //   this.map.panTo(position);
-        // }
         setTimeout(function () { return _this.play(); }, 2000);
     };
     HomePage.prototype.removeMarkers = function () {
@@ -1393,10 +1403,12 @@ var HomePage = /** @class */ (function () {
         this.removeMarkers();
     };
     HomePage.prototype.next = function () {
+        this.travelRoute.pause();
         this.travelRoute.next();
         this.removeMarkers();
     };
     HomePage.prototype.prev = function () {
+        this.travelRoute.pause();
         this.travelRoute.prev();
         this.removeMarkers();
     };
@@ -1419,7 +1431,8 @@ var HomePage = /** @class */ (function () {
     };
     HomePage.ctorParameters = function () { return [
         { type: _ionic_angular__WEBPACK_IMPORTED_MODULE_2__["Platform"] },
-        { type: _angular_common_http__WEBPACK_IMPORTED_MODULE_4__["HttpClient"] }
+        { type: _angular_common_http__WEBPACK_IMPORTED_MODULE_4__["HttpClient"] },
+        { type: _state_service__WEBPACK_IMPORTED_MODULE_5__["StateService"] }
     ]; };
     HomePage = tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Component"])({
@@ -1427,7 +1440,9 @@ var HomePage = /** @class */ (function () {
             template: __webpack_require__(/*! raw-loader!./home.page.html */ "./node_modules/raw-loader/index.js!./src/app/home/home.page.html"),
             styles: [__webpack_require__(/*! ./home.page.scss */ "./src/app/home/home.page.scss")]
         }),
-        tslib__WEBPACK_IMPORTED_MODULE_0__["__metadata"]("design:paramtypes", [_ionic_angular__WEBPACK_IMPORTED_MODULE_2__["Platform"], _angular_common_http__WEBPACK_IMPORTED_MODULE_4__["HttpClient"]])
+        tslib__WEBPACK_IMPORTED_MODULE_0__["__metadata"]("design:paramtypes", [_ionic_angular__WEBPACK_IMPORTED_MODULE_2__["Platform"],
+            _angular_common_http__WEBPACK_IMPORTED_MODULE_4__["HttpClient"],
+            _state_service__WEBPACK_IMPORTED_MODULE_5__["StateService"]])
     ], HomePage);
     return HomePage;
 }());

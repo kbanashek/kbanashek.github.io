@@ -445,7 +445,7 @@ module.exports = webpackAsyncContext;
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<ion-app>\n  <ion-split-pane>\n    <ion-menu type=\"overlay\">\n      <ion-header>\n        <ion-toolbar>\n          <ion-title>Menu</ion-title>\n        </ion-toolbar>\n      </ion-header>\n      <ion-content>\n        <ion-list>\n          <ion-menu-toggle auto-hide=\"false\" *ngFor=\"let p of itemsList\">\n            <ion-item (click)=\"log(p.Name)\">\n              <!-- <ion-icon slot=\"start\" [name]=\"p.Name\"></ion-icon> -->\n              <ion-label>\n                {{ p.Name }}\n              </ion-label>\n            </ion-item>\n          </ion-menu-toggle>\n        </ion-list>\n      </ion-content>\n    </ion-menu>\n    <ion-router-outlet main></ion-router-outlet>\n  </ion-split-pane>\n</ion-app>\n"
+module.exports = "<ion-app>\n  <ion-split-pane>\n    <ion-menu type=\"overlay\">\n      <ion-header>\n        <ion-toolbar>\n          <ion-title>Menu</ion-title>\n        </ion-toolbar>\n      </ion-header>\n      <ion-content>\n        <ion-list>\n          <ion-menu-toggle auto-hide=\"false\" *ngFor=\"let p of itemsList\">\n            <ion-item button>\n              <ion-label>{{ p.Name }}</ion-label>\n              <ion-toggle\n                (ionChange)=\"toggleChange(p)\"\n                [(ngModel)]=\"p.checked\"\n                name=\"{{ p.Name }}\"\n                color=\"light\"\n              ></ion-toggle>\n            </ion-item>\n          </ion-menu-toggle>\n        </ion-list>\n      </ion-content>\n    </ion-menu>\n    <ion-router-outlet main></ion-router-outlet>\n  </ion-split-pane>\n</ion-app>\n"
 
 /***/ }),
 
@@ -472,11 +472,6 @@ __webpack_require__.r(__webpack_exports__);
 const routes = [
     {
         path: '',
-        redirectTo: 'home',
-        pathMatch: 'full',
-    },
-    {
-        path: '**',
         redirectTo: 'home',
         pathMatch: 'full',
     },
@@ -530,6 +525,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _ionic_native_splash_screen_ngx__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @ionic-native/splash-screen/ngx */ "./node_modules/@ionic-native/splash-screen/ngx/index.js");
 /* harmony import */ var _ionic_native_status_bar_ngx__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @ionic-native/status-bar/ngx */ "./node_modules/@ionic-native/status-bar/ngx/index.js");
 /* harmony import */ var rxjs_operators__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! rxjs/operators */ "./node_modules/rxjs/_esm2015/operators/index.js");
+/* harmony import */ var _state_service__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./state.service */ "./src/app/state.service.ts");
+
 
 
 
@@ -538,11 +535,12 @@ __webpack_require__.r(__webpack_exports__);
 
 
 let AppComponent = class AppComponent {
-    constructor(platform, splashScreen, statusBar, http) {
+    constructor(platform, splashScreen, statusBar, http, state) {
         this.platform = platform;
         this.splashScreen = splashScreen;
         this.statusBar = statusBar;
         this.http = http;
+        this.state = state;
         this.appPages = [
             {
                 title: 'Home',
@@ -555,7 +553,20 @@ let AppComponent = class AppComponent {
                 icon: 'list',
             },
         ];
+        this.selectedLayer = new _angular_core__WEBPACK_IMPORTED_MODULE_1__["EventEmitter"]();
         this.url = 'https://btt-api.herokuapp.com/tarpons?_limit=20';
+        this.toggleChange = selectedItem => {
+            if (selectedItem.checked === true) {
+                this.itemsList.forEach(x => (x.checked = false));
+                selectedItem.checked = true;
+                if (selectedItem) {
+                    this.state.selectedLayer = selectedItem;
+                }
+            }
+            else {
+                selectedItem.checked = false;
+            }
+        };
         this.log = item => {
             console.log(item);
         };
@@ -570,7 +581,7 @@ let AppComponent = class AppComponent {
             this.splashScreen.hide();
             this.getTarpons().subscribe(results => {
                 results.forEach(x => {
-                    x.clicked = false;
+                    x.checked = false;
                 });
                 this.itemsList = results;
             });
@@ -581,8 +592,13 @@ AppComponent.ctorParameters = () => [
     { type: _ionic_angular__WEBPACK_IMPORTED_MODULE_3__["Platform"] },
     { type: _ionic_native_splash_screen_ngx__WEBPACK_IMPORTED_MODULE_4__["SplashScreen"] },
     { type: _ionic_native_status_bar_ngx__WEBPACK_IMPORTED_MODULE_5__["StatusBar"] },
-    { type: _angular_common_http__WEBPACK_IMPORTED_MODULE_2__["HttpClient"] }
+    { type: _angular_common_http__WEBPACK_IMPORTED_MODULE_2__["HttpClient"] },
+    { type: _state_service__WEBPACK_IMPORTED_MODULE_7__["StateService"] }
 ];
+tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
+    Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Output"])(),
+    tslib__WEBPACK_IMPORTED_MODULE_0__["__metadata"]("design:type", _angular_core__WEBPACK_IMPORTED_MODULE_1__["EventEmitter"])
+], AppComponent.prototype, "selectedLayer", void 0);
 AppComponent = tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
     Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Component"])({
         selector: 'app-root',
@@ -592,7 +608,8 @@ AppComponent = tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
     tslib__WEBPACK_IMPORTED_MODULE_0__["__metadata"]("design:paramtypes", [_ionic_angular__WEBPACK_IMPORTED_MODULE_3__["Platform"],
         _ionic_native_splash_screen_ngx__WEBPACK_IMPORTED_MODULE_4__["SplashScreen"],
         _ionic_native_status_bar_ngx__WEBPACK_IMPORTED_MODULE_5__["StatusBar"],
-        _angular_common_http__WEBPACK_IMPORTED_MODULE_2__["HttpClient"]])
+        _angular_common_http__WEBPACK_IMPORTED_MODULE_2__["HttpClient"],
+        _state_service__WEBPACK_IMPORTED_MODULE_7__["StateService"]])
 ], AppComponent);
 
 
@@ -619,6 +636,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _app_component__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./app.component */ "./src/app/app.component.ts");
 /* harmony import */ var _app_routing_module__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./app-routing.module */ "./src/app/app-routing.module.ts");
 /* harmony import */ var _agm_core__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! @agm/core */ "./node_modules/@agm/core/index.js");
+/* harmony import */ var _angular_forms__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! @angular/forms */ "./node_modules/@angular/forms/fesm2015/forms.js");
+
 
 
 
@@ -642,6 +661,7 @@ AppModule = tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
             _agm_core__WEBPACK_IMPORTED_MODULE_9__["AgmCoreModule"].forRoot({
                 apiKey: 'AIzaSyDgp1DcuImkkO2DFxdi4EVhxbC7fZqfABI',
             }),
+            _angular_forms__WEBPACK_IMPORTED_MODULE_10__["FormsModule"],
         ],
         providers: [
             _ionic_native_status_bar_ngx__WEBPACK_IMPORTED_MODULE_6__["StatusBar"],
@@ -651,6 +671,42 @@ AppModule = tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
         bootstrap: [_app_component__WEBPACK_IMPORTED_MODULE_7__["AppComponent"]],
     })
 ], AppModule);
+
+
+
+/***/ }),
+
+/***/ "./src/app/state.service.ts":
+/*!**********************************!*\
+  !*** ./src/app/state.service.ts ***!
+  \**********************************/
+/*! exports provided: StateService */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "StateService", function() { return StateService; });
+/* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ "./node_modules/@angular/core/fesm2015/core.js");
+/* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! rxjs */ "./node_modules/rxjs/_esm2015/index.js");
+
+
+
+let StateService = class StateService {
+    constructor() {
+        // tslint:disable-next-line: variable-name
+        this._selectedLayer = new rxjs__WEBPACK_IMPORTED_MODULE_2__["BehaviorSubject"](null);
+        this.getSelectedLayer = this._selectedLayer.asObservable();
+    }
+    set selectedLayer(value) {
+        this._selectedLayer.next(value);
+    }
+};
+StateService = tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
+    Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Injectable"])({
+        providedIn: 'root',
+    })
+], StateService);
 
 
 
